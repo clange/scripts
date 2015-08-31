@@ -2,7 +2,7 @@
 #
 # prefixes: output semantic web namespace prefixes from prefix.cc in various formats
 #
-# (c) Christoph Lange <math.semantic.web@gmail.com> 2014
+# © Christoph Lange <math.semantic.web@gmail.com> 2014
 
 input="$HOME/.prefixes.all.file.txt"
 

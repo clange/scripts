@@ -1,4 +1,6 @@
-# runs optipng (http://optipng.sourceforge.net) to compress all screenshots upon creation
+# compress-screenshots.ps1: runs optipng (http://optipng.sourceforge.net) to compress all screenshots upon creation
+
+# © Christoph Lange <math.semantic.web@gmail.com> 2015–
 
 # run e.g. as an *.lnk shortcut in the Startup folder, using
 # powershell -NoProfile -ExecutionPolicy Bypass -NoExit -NoLogo -WindowStyle Hidden -File path\to\compress-screenshots.ps1
