@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# prefixes: output semantic web namespace prefixes from prefix.cc in various formats
+#
+# (c) Christoph Lange <math.semantic.web@gmail.com> 2014
+
+input="$HOME/.prefixes.all.file.txt"
+
+function help {
+cat <<-EOF
+Usage: `basename $0` [-n COUNT] [-o FORMAT] [-p PREFIX1,PREFIX2,...] [-u]
+Outputs bindings for semantic web namespace prefixes from http://prefix.cc in
+various formats.
+
+  -n	Number of prefixes to be output, starting with the most popular ones
+  -o	Output format; one of turtle, sparql, xmlns, rdfa.
+  -p	Only output bindings for the given prefixes PREFIX1,PREFIX2,...;
+	overrides -n
+  -u	Download latest prefixes from http://prefix.cc
+  -h	Display this help
+
+Prefixes are cached in $input.
+EOF
+}
+
+count=-1
+format=turtle
+declare -a prefixes
+update=0
+help=0
+
+while getopts hn:o:p:u opt
+do
+    # TODO handle errors on missing OPTARG
+    case $opt in
+        h) help=1 ;;
+        n) count="$OPTARG" ;;
+        o) format="$OPTARG" ;;
+        p) prefixes=(${OPTARG//,/ }) ;;
+        u) update=1 ;; # TODO implement
+    esac
+done
+
+# -p overrides -n
+if [[ ${#prefixes[*]} -gt 0 ]]
+then
+    count=${#prefixes[*]}
+    n=0
+else
+    n=0
+fi
+
+if [[ $help == 1 ]]
+then
+    help
+    exit 0
+elif [[ 0 == 1 ]] # TODO validate command line arguments
+then
+    help
+    exit 1
+fi
+
+while \
+    # there are still prefixes we need to find (in -p mode), or
+    # there are still input lines we need to process (in -n mode)
+    [[ $n -lt $count ]] && read prefix uri
+    # read one line from the input file
+do
+    match=0
+    if [[ ${#prefixes[*]} -eq 0 ]]
+    then
+        match=1
+        let n++
+    elif [[ " ${prefixes[*]} " == *" $prefix "* ]]
+    then
+        match=1
+        let n++
+    fi
+    if [[ $match -eq 1 ]]
+    then
+        case $format in
+            turtle) echo "@prefix $prefix:	<$uri> ." ;;
+            sparql) echo "PREFIX $prefix:	<$uri>" ;;
+            xmlns) echo "xmlns:$prefix=\"$uri\"" ;;
+            rdfa) echo "$prefix: $uri" ;;
+        esac
+    fi
+done < "$input"
