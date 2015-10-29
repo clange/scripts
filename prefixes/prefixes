@@ -37,9 +37,14 @@ do
         n) count="$OPTARG" ;;
         o) format="$OPTARG" ;;
         p) prefixes=(${OPTARG//,/ }) ;;
-        u) update=1 ;; # TODO implement
+        u) update=1 ;;
     esac
 done
+
+if [[ $update == 1 ]]
+then
+    wget --quiet -O "$input" http://prefix.cc/popular/all.file.txt
+fi
 
 # -p overrides -n
 if [[ ${#prefixes[*]} -gt 0 ]]
