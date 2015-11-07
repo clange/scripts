@@ -24,6 +24,7 @@ $watcherProps = @{
     Filter = '*.png'
     IncludeSubdirectories = $true
     NotifyFilter = [IO.NotifyFilters]'FileName, LastWrite'
+    EnableRaisingEvents = $true
 }
 $watcher = New-Object IO.FileSystemWatcher -Property $watcherProps
 
