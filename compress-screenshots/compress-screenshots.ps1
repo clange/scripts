@@ -2,8 +2,7 @@
 
 # © Christoph Lange <math.semantic.web@gmail.com> 2015–
 
-# run e.g. as an *.lnk shortcut in the Startup folder, using
-# powershell -NoProfile -ExecutionPolicy Bypass -NoExit -NoLogo -WindowStyle Hidden -File path\to\compress-screenshots.ps1
+# Download and licensing information available at https://github.com/clange/scripts
 
 # Source: http://superuser.com/questions/226828/how-to-monitor-a-folder-and-trigger-a-command-line-action-when-a-file-is-created
 
