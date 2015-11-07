@@ -30,7 +30,7 @@ $watcher = New-Object IO.FileSystemWatcher -Property $watcherProps
 # set up the event handler
 $compressAction = {
     $name = $Event.SourceEventArgs.Name
-    optipng -o5 $name
+    & optipng -o5 $name
 }
 
 # register the event handler
