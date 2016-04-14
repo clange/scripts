@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# png-groups-to-pdf: convert each group of PNG files (file1.png ... fileN.png)
+#
+# © Christoph Lange <math.semantic.web@gmail.com> 2016
+
+for group in \
+    $(ls -1 *.png \
+      | sed 's/[0-9]*\.png$//' \
+      | uniq)
+do
+    # $group*.png without quotes leaves globbing activated
+    gm convert -page A4 $group*.png $group.pdf
+    echo $group.pdf
+done
