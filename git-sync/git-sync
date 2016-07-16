@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# git-sync: force synchronisation with git repository by pulling
+# and running default merge operation until we can push.
+#
+# © Christoph Lange <math.semantic.web@gmail.com> 2016
+
+export GIT_MERGE_AUTOEDIT=no
+
+while ! git push
+do
+    git pull
+done
