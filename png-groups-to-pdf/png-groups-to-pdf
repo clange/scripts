@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# png-groups-to-pdf: convert each group of PNG files (file1.png ... fileN.png)
+# png-groups-to-pdf: convert each group of PNG files (file1.png ... fileN.png) to one PDF
 #
 # © Christoph Lange <math.semantic.web@gmail.com> 2016
 
