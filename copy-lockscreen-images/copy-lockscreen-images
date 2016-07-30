@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# copy-lockscreen-images: copy the Windows 10 lock screen images to the current directory, with the right filename extensions (as to be able to view them)
+#
+# © Christoph Lange <math.semantic.web@gmail.com> 2016
+# 
+# Source: https://www.tekrevue.com/tip/find-windows-spotlight-lock-screen-images-windows-10/
+
+# safe script settings
+set -euo pipefail
+IFS=$'\n\t'
+
+for file in $HOME/AppData/Local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets/*
+do
+    mime=$(file --brief --mime-type $file) # e.g. image/jpeg
+    subtype=${mime#*/} # e.g. jpeg
+    ext=$(case $subtype in
+              jpeg) echo jpg ;;
+              *) echo $subtype ;;
+          esac)
+    cp -v $file ./${file##*/}.$ext
+done
