@@ -17,56 +17,45 @@ if ($Install) {
 
 $scanDir = "$env:USERPROFILE\Pictures\Scans"
 
-# set up the watcher for file (2)
-$watcher2Props = @{
+# set up the watcher for file
+$watcherProps = @{
     Path = $scanDir
-    Filter = 'Scan_???????? (2).png'
+    Filter = 'Scan_????????.png'
     IncludeSubdirectories = $true
     NotifyFilter = [IO.NotifyFilters]'FileName'
     EnableRaisingEvents = $true
 }
-$watcher2 = New-Object IO.FileSystemWatcher -Property $watcher2Props
+$watcher = New-Object IO.FileSystemWatcher -Property $watcherProps
 
-# set up the watcher for file (10)
-$watcher10Props = @{
-    Path = $scanDir
-    Filter = 'Scan_???????? (10).png'
-    IncludeSubdirectories = $true
-    NotifyFilter = [IO.NotifyFilters]'FileName'
-    EnableRaisingEvents = $true
-}
-$watcher10 = New-Object IO.FileSystemWatcher -Property $watcher10Props
-
-# set up the event handlers
-$rename2Action = {
-    $name2 = $Event.SourceEventArgs.Name
+# set up the event handler:
+# if (*) not present, rename to (1)
+# else if (1)…(9) present, rename to (n+1)
+$renameAction = {
+    $name = $Event.SourceEventArgs.Name
     $directory = (Get-Item $Event.SourceEventArgs.FullPath).Directory.FullName
     Set-Location $directory
-    $name = $name2 -Replace " \(2\)\.png", ".png"
-    $name1 = $name2 -Replace " \(2\)\.png", " (1).png"
-    if (Test-Path $name) {
-        if (-Not (Test-Path $name1)) {
-            Rename-Item $name $name1
-        } else {
-            [System.Windows.Forms.MessageBox]::Show("${directory}: $name1 already exists.", "Warning")
+    $existing = Get-ChildItem "Scan_???????? (*).png" | Where-Object {$_.Name -Match "Scan_........ \([0-9]+\)\.png"}
+    $maxIndex = 0
+    if ($existing.Count -gt 0) {
+        foreach ($file in $existing) {
+            $file -Match ' \(([0-9]+)\)\.png' | Out-Null
+            [int]$index = [convert]::ToInt32($matches[1], 10)
+            if ($index -gt $maxIndex) {
+                $maxIndex = $index
+            }
         }
-    } else {
-        [System.Windows.Forms.MessageBox]::Show("${directory}: $name2 exists but $name does not exist.", "Warning")
     }
+    $maxIndex++
+    # string looks like 10+ ?
+    # $l=[math]::log(1000)/[math]::log(10); $r=[int]$l; $rem=[math]::abs($l-$r); if ($rem -Lt [math]::pow(0.1,$r+1)) { "Exact power of" }
+    Rename-Item $name ($name -Replace "\.png", " ($maxIndex).png")
+    # [System.Windows.Forms.MessageBox]::Show("${directory}: $name1 already exists.", "Warning")
 }
 
-$rename10Action = {
-    $directory = (Get-Item $Event.SourceEventArgs.FullPath).Directory.FullName
-    [System.Windows.Forms.MessageBox]::Show($directory)
-    # TODO go to directory; prepend a leading 0 to every (#)
-}
-
-# register the event handlers
-$created2 = Register-ObjectEvent -InputObject $watcher2 -EventName 'Created' -Action $rename2Action
-$created10 = Register-ObjectEvent -InputObject $watcher10 -EventName 'Created' -Action $rename10Action
+# register the event handler
+$created = Register-ObjectEvent -InputObject $watcher -EventName 'Created' -Action $renameAction
 
 # unregister the event handler when the shell is terminated
 trap {
-    Unregister-Event $created2.Id
-    Unregister-Event $created10.Id
+    Unregister-Event $created.Id
 }
