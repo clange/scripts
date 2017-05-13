@@ -36,8 +36,10 @@ $renameAction = {
     Set-Location $directory
     $existing = Get-ChildItem "Scan_???????? (*).png" | Where-Object {$_.Name -Match "Scan_........ \([0-9]+\)\.png"}
     $maxIndex = 0
+    # get all existing scan files with number suffixes
     if ($existing.Count -gt 0) {
         foreach ($file in $existing) {
+            # extract the number suffix 
             $file -Match ' \(([0-9]+)\)\.png' | Out-Null
             [int]$index = [convert]::ToInt32($matches[1], 10)
             if ($index -gt $maxIndex) {
