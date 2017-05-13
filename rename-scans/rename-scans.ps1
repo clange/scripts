@@ -48,9 +48,16 @@ $renameAction = {
         }
     }
     $maxIndex++
-    # string looks like 10+ ?
-    # $l=[math]::log(1000)/[math]::log(10); $r=[int]$l; $rem=[math]::abs($l-$r); if ($rem -Lt [math]::pow(0.1,$r+1)) { "Exact power of" }
-    Rename-Item $name ($name -Replace "\.png", " ($maxIndex).png")
+    Rename-Item $name ($name -Replace '\.png', " ($maxIndex).png")
+    # if we have arrived at the next power of 10, …
+    if ($maxIndex -Match '10+') {
+        # … add leading zeroes to all previous names so that lexicographic sorting has the same effect as numeric sorting
+        # [System.Windows.Forms.MessageBox]::Show("\$maxIndex = $maxIndex", 'Debug')
+        foreach ($file in $existing) {
+            Rename-Item $file ($file -Replace '\(([0-9]+\)\.png)', '(0$1')
+        }
+    }
+    # The above algorithm avoids name clashes.  Nevertheless we keep the following comment, in case we should ever need a message box, to know how it's invoked.
     # [System.Windows.Forms.MessageBox]::Show("${directory}: $name1 already exists.", "Warning")
 }
 
