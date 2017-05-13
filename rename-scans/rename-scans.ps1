@@ -32,15 +32,13 @@ $watcher = New-Object IO.FileSystemWatcher -Property $watcherProps
 # else if (1)…(9) present, rename to (n+1)
 $renameAction = {
     $name = $Event.SourceEventArgs.Name
-    $directory = (Get-Item $Event.SourceEventArgs.FullPath).Directory.FullName
-    Set-Location $directory
     $maxIndex = 0
     # get all existing scan files with number suffixes
-    $existing = Get-ChildItem 'Scan_???????? (*).png' | Where-Object {$_.Name -Match 'Scan_........ \([0-9]+\)\.png'}
+    $existing = Get-ChildItem 'Scan_???????? (*).png' | Where-Object {$_.Name -Match 'Scan_........ \([0-9]+\)\.png$'}
     if ($existing.Count -gt 0) {
         foreach ($file in $existing) {
             # extract the number suffix 
-            $file -Match ' \(([0-9]+)\)\.png' | Out-Null
+            $file -Match ' \(([0-9]+)\)\.png$' | Out-Null
             [int]$index = [convert]::ToInt32($matches[1], 10)
             if ($index -gt $maxIndex) {
                 $maxIndex = $index
@@ -50,15 +48,13 @@ $renameAction = {
     $maxIndex++
     Rename-Item $name ($name -Replace '\.png', " ($maxIndex).png")
     # if we have arrived at the next power of 10, …
-    if ($maxIndex -Match '10+') {
+    if ($maxIndex -Match '^10+$') {
         # … add leading zeroes to all previous names so that lexicographic sorting has the same effect as numeric sorting
         # [System.Windows.Forms.MessageBox]::Show("\$maxIndex = $maxIndex", 'Debug')
         foreach ($file in $existing) {
             Rename-Item $file ($file -Replace '\(([0-9]+\)\.png)', '(0$1')
         }
     }
-    # The above algorithm avoids name clashes.  Nevertheless we keep the following comment, in case we should ever need a message box, to know how it's invoked.
-    # [System.Windows.Forms.MessageBox]::Show("${directory}: $name1 already exists.", "Warning")
 }
 
 # register the event handler
