@@ -7,7 +7,6 @@
 
 use strict;
 use warnings;
-use v5.10;
 use List::MoreUtils qw(firstidx);
 use POSIX qw(mktime strftime);
 
