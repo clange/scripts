@@ -46,7 +46,7 @@ while (<>) {
             $day = $3;
             $month = $2 - 1;
         }
-    } elsif (/^(.*?) ((?:[0-9]{1,2}:[0-9]{2}-[0-9]{1,2}:[0-9]{2}, ?)+)/) {
+    } elsif (/^(.*?) ((?:[0-9]{1,2}:[0-9]{2}-[0-9]{1,2}:[0-9]{2}, ?)+)$/) {
         # an event with clock logs
         # open LOGBOOK drawer
         printf "** %s$nl   :LOGBOOK:$nl", $1;
