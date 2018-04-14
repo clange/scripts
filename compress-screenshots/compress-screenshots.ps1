@@ -40,6 +40,6 @@ $changed = Register-ObjectEvent -InputObject $watcher -EventName 'Changed' -Acti
 
 # unregister the event handler when the shell is terminated
 trap {
-    Unregister-Event $changed.Id
-    Unregister-Event $created.Id
+    if ($changed) { Unregister-Event $changed.Id }
+    if ($created) { Unregister-Event $created.Id }
 }
