@@ -10,17 +10,22 @@ use warnings;
 use List::MoreUtils qw(firstidx);
 use POSIX qw(mktime strftime);
 
+# variables
 my ($nl, $year, $weekday, $weekday_strftime, $day, $month, @timestamp, $from_str, $to_str, $from, $to, $diff, $diff_minutes, @clocks);
+
+# "Vocabulary" of date representations
 my $DAY_RE = "Mon|Tue|Wed|Thu|Fri|Sat|Sun";
 my @MONTHS = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
+my $MONTHS_RE = join "|", @MONTHS;
 
 while (<>) {
     if (/^([0-9]{4})(\r?)$/) {
         # start of a "year" block
+        # conversion into Perl's year format
         $year = $1 - 1900;
         $nl = "$2\n";
         print;
-    } elsif (/^(${DAY_RE}) ([0-9]{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\r?$/) {
+    } elsif (/^(${DAY_RE}) ([0-9]{1,2}) (${MONTHS_RE})\r?$/) {
         # start of a "day" block
         # collect matched substrings
         $weekday = $1;
