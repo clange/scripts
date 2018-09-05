@@ -51,7 +51,7 @@ while (<>) {
             $day = $3;
             $month = $2 - 1;
         }
-    } elsif (/^(.*?) ((?:[0-9]{1,2}:[0-9]{2}-[0-9]{1,2}:[0-9]{2}, ?)+)$/) {
+    } elsif (/^(.*?) ((?:[0-9]{1,2}:[0-9]{2}-(?:[0-9]{1,2}:)?[0-9]{2}, ?)+)$/) {
         # an event with clock logs
         # open LOGBOOK drawer
         printf "** %s$nl   :LOGBOOK:$nl", $1;
@@ -59,9 +59,10 @@ while (<>) {
         @clocks = split /, ?/, $2;
         foreach (reverse @clocks) {
             # for each interval (most recent first)
-            if (/([0-9]{1,2}):([0-9]{2})-([0-9]{1,2}):([0-9]{2})/) {
+            if (/([0-9]{1,2}):([0-9]{2})-(?:([0-9]{1,2}):)?([0-9]{2})/) {
+                # notation: HH:MM-HH:MM, or shorthand HH:MM-MM (same hour)
                 $from = mktime(0, $2, $1, $day, $month, $year);
-                $to = mktime(0, $4, $3, $day, $month, $year);
+                $to = mktime(0, $4, $3 // $1, $day, $month, $year);
                 # if end is less than start then we assume it's on the next day
                 if ($to < $from) {
                     $to += 60 * 60 * 24;
