@@ -10,17 +10,22 @@ use warnings;
 use List::MoreUtils qw(firstidx);
 use POSIX qw(mktime strftime);
 
+# variables
 my ($nl, $year, $weekday, $weekday_strftime, $day, $month, @timestamp, $from_str, $to_str, $from, $to, $diff, $diff_minutes, @clocks);
+
+# "Vocabulary" of date representations
 my $DAY_RE = "Mon|Tue|Wed|Thu|Fri|Sat|Sun";
 my @MONTHS = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
+my $MONTHS_RE = join "|", @MONTHS;
 
 while (<>) {
     if (/^([0-9]{4})(\r?)$/) {
         # start of a "year" block
+        # conversion into Perl's year format
         $year = $1 - 1900;
         $nl = "$2\n";
         print;
-    } elsif (/^(${DAY_RE}) ([0-9]{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\r?$/) {
+    } elsif (/^(${DAY_RE}) ([0-9]{1,2}) (${MONTHS_RE})\r?$/) {
         # start of a "day" block
         # collect matched substrings
         $weekday = $1;
@@ -46,7 +51,7 @@ while (<>) {
             $day = $3;
             $month = $2 - 1;
         }
-    } elsif (/^(.*?) ((?:[0-9]{1,2}:[0-9]{2}-[0-9]{1,2}:[0-9]{2}, ?)+)$/) {
+    } elsif (/^(.*?) ((?:[0-9]{1,2}:[0-9]{2}-(?:[0-9]{1,2}:)?[0-9]{2}, ?)+)$/) {
         # an event with clock logs
         # open LOGBOOK drawer
         printf "** %s$nl   :LOGBOOK:$nl", $1;
@@ -54,9 +59,10 @@ while (<>) {
         @clocks = split /, ?/, $2;
         foreach (reverse @clocks) {
             # for each interval (most recent first)
-            if (/([0-9]{1,2}):([0-9]{2})-([0-9]{1,2}):([0-9]{2})/) {
+            if (/([0-9]{1,2}):([0-9]{2})-(?:([0-9]{1,2}):)?([0-9]{2})/) {
+                # notation: HH:MM-HH:MM, or shorthand HH:MM-MM (same hour)
                 $from = mktime(0, $2, $1, $day, $month, $year);
-                $to = mktime(0, $4, $3, $day, $month, $year);
+                $to = mktime(0, $4, $3 // $1, $day, $month, $year);
                 # if end is less than start then we assume it's on the next day
                 if ($to < $from) {
                     $to += 60 * 60 * 24;
