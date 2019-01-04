@@ -1,0 +1,26 @@
+#!/bin/bash
+# run upgrade procedure
+# https://doc.owncloud.org/server/latest/admin_manual/maintenance/update.html
+cd /var/www/html/owncloud/
+sudo -u www-data ./occ maintenance:mode --on
+sudo service apache2 stop
+wget -qO- https://download.owncloud.org/community/owncloud-10.0.7.tar.bz2 | tar --transform 's/^owncloud/owncloud-10.0.7/' -jxv -C /var/www/html/
+cp -av /var/www/html/owncloud{,-10.0.7}/config/config.php
+cp -avl /var/www/html/owncloud{,-10.0.7}/data/
+cd ..
+mv owncloud{,-old}
+mv owncloud{-10.0.10,}
+cd owncloud
+for i in activity files_pdfviewer files_texteditor gallery; do sudo -u www-data occ app:disable $i; done
+sudo -u www-data ./occ upgrade
+~/bin/owncloud-permissions
+chown -R www-data:www-data .
+sudo -u www-data ./occ maintenance:mode --off
+for i in activity files_pdfviewer files_texteditor gallery; do sudo -u www-data occ app:enable $i; done
+sudo -u www-data ./occ maintenance:update:htaccess
+cd ..
+# diff -r --brief owncloud owncloud-old/
+sudo service apache2 start
+rm -rf owncloud-old
+# https://doc.owncloud.org/server/10.0/admin_manual/maintenance/update.html#setting-permissions-for-updating
+# https://doc.owncloud.org/server/9.0/admin_manual/configuration_server/index_php_less_urls.html
