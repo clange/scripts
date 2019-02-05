@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 # org-offline-to-clock: convert clock log notes taken offline to Org-mode syntax
 
 # © Christoph Lange <math.semantic.web@gmail.com> 2017–
@@ -45,7 +45,7 @@ while (<>) {
         print;
         chomp;
         if (($1 - 1900) ne $year) {
-            print STDERR "In $_: expected year @{ $year + 1900 }, found $1 – please reorder entries.\n";
+            print STDERR "In $_: expected year @{[ $year + 1900 ]}, found $1 – please reorder entries.\n";
             exit;
         } else {
             $day = $3;
