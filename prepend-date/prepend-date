@@ -1,0 +1,14 @@
+#!/bin/bash
+
+dirname="${1%/*}"
+basename="${1##*/}"
+
+date="$(date +%F)"
+if [[ "$basename" == *' '* ]]
+then
+	date="$date "
+else
+	date="$date-"
+fi
+
+mv -v -i "$1" "$dirname/$date$basename"
