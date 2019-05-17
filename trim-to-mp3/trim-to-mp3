@@ -1,0 +1,2 @@
+#!/bin/bash
+ffmpeg -ss "$1" -to "$2" -i "$3" -codec:a libmp3lame -qscale:a 0 "${3%.*}.mp3"
