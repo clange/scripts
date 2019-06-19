@@ -1,5 +1,5 @@
 #!/usr/bin/zsh
-cd storage/shared/zeitonline
+cd ~/storage/shared/zeitonline
 for file in ../Download/DZ_*.zip
 do
 	[[ -r $file ]] \
