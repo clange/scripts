@@ -1,22 +1,31 @@
 #!/bin/bash
-# run upgrade procedure
+# 
+# Upgrade OwnCloud
+# This is not really a script, but these are instructions to be followed manually.
 # https://doc.owncloud.org/server/latest/admin_manual/maintenance/update.html
+
+NEW_VERSION=10.2.1
+APPS=( activity files_pdfviewer files_texteditor gallery )
+
 cd /var/www/html/owncloud/
 sudo -u www-data ./occ maintenance:mode --on
 sudo service apache2 stop
-wget -qO- https://download.owncloud.org/community/owncloud-10.0.7.tar.bz2 | tar --transform 's/^owncloud/owncloud-10.0.7/' -jxv -C /var/www/html/
-cp -av /var/www/html/owncloud{,-10.0.7}/config/config.php
-cp -avl /var/www/html/owncloud{,-10.0.7}/data/
+for i in "${APPS[@]}"; do sudo -u www-data ./occ app:disable $i; done
+wget -qO- https://download.owncloud.org/community/owncloud-${NEW_VERSION}.tar.bz2 | tar --transform 's/^owncloud/owncloud-${NEW_VERSION}/' -jxv -C /var/www/html/
+cp -av /var/www/html/owncloud{,-${NEW_VERSION}}/config/config.php
+# use hard links to avoid duplicating space
+cp -avl /var/www/html/owncloud{,-${NEW_VERSION}}/data/
 cd ..
 mv owncloud{,-old}
-mv owncloud{-10.0.10,}
+mv owncloud{-${NEW_VERSION},}
 cd owncloud
-for i in activity files_pdfviewer files_texteditor gallery; do sudo -u www-data occ app:disable $i; done
 sudo -u www-data ./occ upgrade
+# The following is a local copy of the script at https://doc.owncloud.org/server/10.2/admin_manual/installation/installation_wizard.html#post-installation-steps
+# Actually, its latest version also includes some of these upgrade steps.
+# Therefore it's best to run selected parts of that script manually.
 ~/bin/owncloud-permissions
-chown -R www-data:www-data .
 sudo -u www-data ./occ maintenance:mode --off
-for i in activity files_pdfviewer files_texteditor gallery; do sudo -u www-data occ app:enable $i; done
+for i in "${APPS[@]}"; do sudo -u www-data ./occ app:enable $i; done
 sudo -u www-data ./occ maintenance:update:htaccess
 cd ..
 # diff -r --brief owncloud owncloud-old/
