@@ -1,0 +1,5 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# wrapper for mosh to enable public key authentication in termux
+
+. source-ssh-agent
+mosh $@
