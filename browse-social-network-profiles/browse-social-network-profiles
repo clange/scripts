@@ -1,0 +1,31 @@
+#!/bin/bash -x
+
+SITES='xing.com linkedin.com'
+
+# build a string like (site:xing.com OR linkedin.com) out of SITES
+sites_string='('
+join=''
+for site in $SITES
+do
+    sites_string="${sites_string}${join}site:${site}"
+    join=' OR '
+done
+sites_string="${sites_string})"
+
+# successively read names from standard input
+while read name
+do
+    # Wrap names in double quotes unless the string already contains a quote.
+    # In the latter case it is assumed that the user intentionally quoted parts of the string,
+    # as in "Steve Jobs" Apple.
+    if [[ $name != *\"* ]]
+    then
+        name="\"${name}\""
+    fi
+    # for each name, add a search request to the command line
+    args="${args} "'"? '"${name//\"/\\\"}"' ${sites_string}"'
+done
+
+# Invoke the Google Chrome browser with all search requests.
+# Typically, each of them would open in a tab.
+eval '"$CHROME"'"$args"
