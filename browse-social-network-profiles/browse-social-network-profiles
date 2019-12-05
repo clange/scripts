@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# browse-social-network-profiles: search for people in social networks by opening a search query in a browser (for now, Google Chrome / Chromium)
+#
+# © Christoph Lange <math.semantic.web@gmail.com> 2019
 
 SITES='xing.com linkedin.com'
 
