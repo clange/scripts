@@ -35,4 +35,5 @@ done
 
 # Invoke the Google Chrome browser with all search requests.
 # Typically, each of them would open in a tab.
+# It is assumed that the CHROME environment variable contains the path to the executable.
 eval '"$CHROME"'"$args"
