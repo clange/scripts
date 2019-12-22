@@ -1,2 +1,2 @@
 # scripts
-Shell and other scripts to automate tasks
+Unix shell, PowerShell and other scripts to automate tasks
