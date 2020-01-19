@@ -19,13 +19,13 @@ my @MONTHS = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
 my $MONTHS_RE = join "|", @MONTHS;
 
 while (<>) {
-    if (/^([0-9]{4})(\r?)$/) {
+    if (/^([0-9]{4})\s*(\r?)$/) {
         # start of a "year" block
         # conversion into Perl's year format
         $year = $1 - 1900;
         $nl = "$2\n";
         print;
-    } elsif (/^(${DAY_RE}) ([0-9]{1,2}) (${MONTHS_RE})\r?$/) {
+    } elsif (/^(${DAY_RE}) ([0-9]{1,2}) (${MONTHS_RE})\s*\r?$/) {
         # start of a "day" block
         # collect matched substrings
         $weekday = $1;

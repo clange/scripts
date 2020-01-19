@@ -1,0 +1,39 @@
+#!/bin/bash
+# 
+# browse-social-network-profiles: search for multiple people in multiple social networks in a web browser (for now, Google Chrome / Chromium)
+# 
+# © Christoph Lange <math.semantic.web@gmail.com> 2019
+
+SITES='xing.com linkedin.com'
+
+# build a string like (site:xing.com OR linkedin.com) out of SITES
+sites_string='('
+join=''
+for site in $SITES
+do
+    sites_string="${sites_string}${join}site:${site}"
+    join=' OR '
+done
+sites_string="${sites_string})"
+
+# successively read names from standard input
+# one line of input is assumed to look like 
+# GivenName FamilyName (which will be put into double quotes and thus searched as a phrase), or
+# "GivenName FamilyName" CompanyName (which will be sent to the search engine as is) 
+while read name
+do
+    # Wrap names in double quotes unless the string already contains a quote.
+    # In the latter case it is assumed that the user intentionally quoted parts of the string,
+    # as in "Steve Jobs" Apple.
+    if [[ $name != *\"* ]]
+    then
+        name="\"${name}\""
+    fi
+    # for each name, add a search request to the command line (i.e., using the browser's default search engine, which is assumed to support the same query syntax as Google) 
+    args="${args} "'"? '"${name//\"/\\\"}"' ${sites_string}"'
+done
+
+# Invoke the Google Chrome browser with all search requests.
+# Typically, each of them would open in a tab.
+# It is assumed that the CHROME environment variable contains the path to the executable.
+eval '"$CHROME"'"$args"
