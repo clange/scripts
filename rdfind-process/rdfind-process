@@ -1,0 +1,31 @@
+#!/bin/bash
+# 
+# rdfind-process: process a results.txt file produced by rdfind (https://rdfind.pauldreik.se/) by hard-linking files (in case rdfind itself failed to do so)
+# 
+# © Christoph Lange <math.semantic.web@gmail.com> 2020
+
+file=
+file_id=
+
+while read duptype id depth size device inode priority name
+do
+    [[ $duptype == \#* ]] && continue
+    if [[ $duptype == DUPTYPE_FIRST_OCCURRENCE ]]
+    then
+        file_id="$id"
+        file="$name"
+    elif [[ $duptype == DUPTYPE_WITHIN_SAME_TREE ]]
+    then
+        if [[ -z $file ]]
+        then
+            echo "first occurrence of file undefined: $name" >&2
+            continue
+        elif [[ $id != "-${file_id}" ]]
+        then
+            echo "invalid id $id: $name - expected ${file_id}" >&2
+            continue
+        else
+            ln -fv "$file" "$name"
+        fi
+    fi
+done < "$1"
