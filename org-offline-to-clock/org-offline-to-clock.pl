@@ -21,12 +21,14 @@ my $MONTHS_RE = join "|", @MONTHS;
 while (<>) {
     if (/^([0-9]{4})\s*(\r?)$/) {
         # start of a "year" block
+        # Example: 2020
         # conversion into Perl's year format
         $year = $1 - 1900;
         $nl = "$2\n";
         print;
     } elsif (/^(${DAY_RE}) ([0-9]{1,2}) (${MONTHS_RE})\s*\r?$/) {
         # start of a "day" block
+        # Example: Thu 4 Jun
         # collect matched substrings
         $weekday = $1;
         $day = $2;
@@ -53,6 +55,7 @@ while (<>) {
         }
     } elsif (/^(.*?) ((?:[0-9]{1,2}:[0-9]{2}-(?:[0-9]{1,2}:)?[0-9]{2}, ?)+)$/) {
         # an event with clock logs
+        # Example: Perl coding 13:45-49, 23:59-0:15,
         # open LOGBOOK drawer
         printf "** %s$nl   :LOGBOOK:$nl", $1;
         # split multiple log intervals
