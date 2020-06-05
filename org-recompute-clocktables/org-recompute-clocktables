@@ -1,0 +1,8 @@
+#!/usr/bin/emacs --script
+;; -*- mode: Emacs-Lisp -*-
+(find-file (car command-line-args-left))
+(org-update-all-dblocks)
+(search-forward "#+TBLFM:")
+(org-ctrl-c-ctrl-c)
+(save-buffer)
+(kill-buffer)
