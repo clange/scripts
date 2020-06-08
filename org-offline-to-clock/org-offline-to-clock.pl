@@ -115,7 +115,7 @@ END {
     return unless ($group_by eq 'name');
     
     print "* Grouped by name$nl";
-    foreach $name (sort keys %names) {
+    foreach $name (sort { "\L$a" cmp "\L$b" } keys %names) {
         printf $NODE, $name;
         foreach $clock (@{ $names{$name} }) {
             print $clock;
