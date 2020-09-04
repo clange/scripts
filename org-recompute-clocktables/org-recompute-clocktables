@@ -14,10 +14,8 @@
 ;; update all dynamic blocks (here: clocktables)
 (org-update-all-dblocks)
 
-;; find the next table formula (starting from the beginning)
-(while (search-forward "#+TBLFM:" nil t)
-  ;; recompute it
-  (org-ctrl-c-ctrl-c))
+;; recalculate all tables in the buffer (until it converges; some formulas require this even within a single table)
+(org-table-iterate-buffer-tables)
 
 ;; save and close
 (save-buffer)
