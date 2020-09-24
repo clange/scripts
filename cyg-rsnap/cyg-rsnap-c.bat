@@ -10,5 +10,8 @@ vscsc -q
 dosdev x: %1
 dir x:
 rem vscsc -exec="cyg-rsnap-d.bat" d:
+rem prevent energy saving mode
+PresentationSettings /start
 c:\tools\cygwin\bin\bash.exe -x ./cyg-rsnap.sh
+PresentationSettings /stop
 dosdev /d x:
