@@ -6,7 +6,7 @@
 
 SITES='xing.com linkedin.com'
 
-# build a string like (site:xing.com OR linkedin.com) out of SITES
+# build a string like (site:xing.com OR site:linkedin.com) out of SITES
 sites_string='('
 join=''
 for site in $SITES
