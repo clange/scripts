@@ -1,14 +1,24 @@
 #!/usr/bin/emacs --script
 ;; -*- mode: Emacs-Lisp -*-
+;; vim: set ft=lisp
+;; 
+;; org-recompute-clocktables: recompute clocktables and then table formulas in an Org-mode file
+;; 
+;; To understand the use case, please see https://github.com/clange/org-mode/tree/master/clocktable-spreadsheet.
+;;
+;; © Christoph Lange <math.semantic.web@gmail.com> 2020–
+;;
+;; Download and licensing information available at https://github.com/clange/scripts
 
 ;; open the file given as first command line argument
 (find-file (car command-line-args-left))
+
 ;; update all dynamic blocks (here: clocktables)
 (org-update-all-dblocks)
-;; find the first table formula
-(search-forward "#+TBLFM:")
-;; recompute it
-(org-ctrl-c-ctrl-c)
+
+;; recalculate all tables in the buffer (until it converges; some formulas require this even within a single table)
+(org-table-iterate-buffer-tables)
+
 ;; save and close
 (save-buffer)
 (kill-buffer)
