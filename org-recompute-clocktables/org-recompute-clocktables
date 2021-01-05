@@ -3,6 +3,8 @@
 ;; vim: set ft=lisp
 ;; 
 ;; org-recompute-clocktables: recompute clocktables and then table formulas in an Org-mode file
+;; 
+;; To understand the use case, please see https://github.com/clange/org-mode/tree/master/clocktable-spreadsheet.
 ;;
 ;; © Christoph Lange <math.semantic.web@gmail.com> 2020–
 ;;
