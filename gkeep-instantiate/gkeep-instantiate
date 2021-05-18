@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+import gkeepapi
+import sys
+import re
+username = sys.argv[1]
+password = sys.argv[2]
+title = sys.argv[3]
+keep = gkeepapi.Keep()
+keep.login(username, password)
+for gnote in keep.find(query=re.compile(f'^{title}$')):
+    print(gnote.title)
+    print(gnote.text)
+    break
