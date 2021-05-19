@@ -1,8 +1,20 @@
 #!/usr/bin/env python
 import gkeepapi
+import datetime
 import sys
 import re
+
+# get the next weekday on or after the given date
+# source: https://stackoverflow.com/a/37649782
+onDay = lambda date, weekday: date + datetime.timedelta(days=(weekday-date.weekday()+7)%7)
+
+# get next Saturday on or after today
+nextday = onDay(datetime.date.today(), 5)
+print(nextday)
+sys.exit(0)
+
 # parse command line arguments
+username = sys.argv[1]
 password = sys.argv[2]
 title = sys.argv[3]
 # initialize Keep API
@@ -13,4 +25,5 @@ for gnote in keep.find(query=re.compile(f'^{title}$')):
     print(gnote.title)
     print(gnote.text)
     break
+
 
