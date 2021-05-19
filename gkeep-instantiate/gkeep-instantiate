@@ -2,12 +2,15 @@
 import gkeepapi
 import sys
 import re
-username = sys.argv[1]
+# parse command line arguments
 password = sys.argv[2]
 title = sys.argv[3]
+# initialize Keep API
 keep = gkeepapi.Keep()
 keep.login(username, password)
+# retrieve note template
 for gnote in keep.find(query=re.compile(f'^{title}$')):
     print(gnote.title)
     print(gnote.text)
     break
+
