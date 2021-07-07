@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+# mstart: Mehrere Dateien mit einem Programm öffnen
+#
+# (c) Christoph Lange und freeX 2000
+
+function help {
+cat <<-EOF
+Aufruf: `basename $0` [-bwh] PROGRAMM DATEI(en) ...
+Startet PROGRAMM für jede der DATEI(en) einmal.
+
+  -a	Einen Prozess nur starten, wenn der vorige erfolgreich war
+  -b	Programme parallel im Hintergrund starten (nicht mit -a verwenden!)
+  -w	Auf Hintergrundprozesse warten
+  -h	Hilfe anzeigen
+
+Wenn PROGRAMM Optionen hat, müssen Leerzeichen gequotet werden, z.B.:
+
+mstart 'tar tf' *.tar
+EOF
+}
+
+and=0
+background=0
+wait=0
+help=0
+
+while getopts abhw opt
+do
+  case $opt in
+    a) and=1;;
+    b) background=1;;
+    h) help=1;;
+    w) wait=1;;
+  esac
+done
+
+shift $[OPTIND-1]
+
+if [ $help -eq 1 ]
+then
+  help
+  exit 0
+elif [ $# -lt 2 -o \( $and -eq 1 -a $background -eq 1 \) ]
+then
+  help
+  exit 1
+fi
+
+if [ $background -eq 1 ]
+then
+  bg='&'
+else
+  bg=''
+fi
+
+prog="$1"
+shift
+
+for file in "$@"
+do
+  eval \$prog \"\$file\" $bg 
+  if [ $? -ne 0 -a $and -eq 1 ] 
+  then
+    break
+  fi
+done
+
+if [ $wait -eq 1 ]
+then
+  wait
+fi
+
