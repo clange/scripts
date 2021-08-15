@@ -10,8 +10,8 @@ onDay = lambda date, weekday: date + datetime.timedelta(days=(weekday-date.weekd
 
 # get next Saturday on or after today
 nextday = onDay(datetime.date.today(), 5)
-print(nextday)
-sys.exit(0)
+# print(nextday)
+# sys.exit(0)
 
 # parse command line arguments
 username = sys.argv[1]
@@ -20,10 +20,18 @@ title = sys.argv[3]
 # initialize Keep API
 keep = gkeepapi.Keep()
 keep.login(username, password)
+# get tenplate label
+label = keep.findLabel('Vorlage')
 # retrieve note template
-for gnote in keep.find(query=re.compile(f'^{title}$')):
-    print(gnote.title)
-    print(gnote.text)
+for oldNote in keep.find(query=re.compile(f'^{title}$')):
+    # make sure the note is labeled as a template
+    if oldNote.labels.get(label.id) == None:
+        continue
+    # TODO instead, use createList like https://github.com/kiwiz/gkeepapi/issues/75#issuecomment-58819720
+    # TODO additionally copy indentation via indented
+    newNote = keep.createNote(f'{oldNote.title} {nextday}', oldNote.text)
+    # TODO copy all labels except template
+    # TODO copy collaborators
     break
-
+keep.sync()
 
