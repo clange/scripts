@@ -8,8 +8,12 @@ import re
 # source: https://stackoverflow.com/a/37649782
 onDay = lambda date, weekday: date + datetime.timedelta(days=(weekday-date.weekday()+7)%7)
 
-# get next Saturday on or after today
-nextday = onDay(datetime.date.today(), 5)
+# configuration
+SHOP_DAY = 5 # Saturday
+TEMPLATE_LABEL = 'Vorlage'
+
+# get next shopping day on or after today
+nextday = onDay(datetime.date.today(), SHOP_DAY)
 # print(nextday)
 # sys.exit(0)
 
@@ -20,13 +24,14 @@ title = sys.argv[3]
 # initialize Keep API
 keep = gkeepapi.Keep()
 keep.login(username, password)
-# get tenplate label
-label = keep.findLabel('Vorlage')
+# get template label
+label = keep.findLabel(TEMPLATE_LABEL)
 # retrieve note template
 for oldNote in keep.find(query=re.compile(f'^{title}$')):
     # make sure the note is labeled as a template
     if oldNote.labels.get(label.id) == None:
         continue
+    # TODO check if note does not yet exist
     # TODO instead, use createList like https://github.com/kiwiz/gkeepapi/issues/75#issuecomment-58819720
     # TODO additionally copy indentation via indented
     newNote = keep.createNote(f'{oldNote.title} {nextday}', oldNote.text)
