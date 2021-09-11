@@ -18,16 +18,19 @@ EOF
 }
 
 verbose=""
-if [[ $# -eq 0 ]]
-then
-  set *
-elif [[ "$1" = -h || "$1" = --help ]]
+if [[ "$1" = -h || "$1" = --help ]]
 then
   help
   exit 0
 elif [[ "$1" = -v || "$1" = --verbose ]]
 then
   verbose="$1"
+  shift
+fi
+
+if [[ $# -eq 0 ]]
+then
+  set *
 fi
 
 # Simple approach assuming filenames without spaces:
