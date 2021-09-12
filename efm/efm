@@ -41,7 +41,7 @@ fi
 #  > /tmp/efm.$$
 
 i=1
-ls -ld "$@" \
+ls -ld -- "$@" \
  | while read f1 f2 f3 f4 f5
    do
      echo -ne "$f1\t$f3\t$f4\t"
