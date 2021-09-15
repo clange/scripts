@@ -59,7 +59,7 @@ shift
 
 for file in "$@"
 do
-  eval \$prog \"\$file\" $bg 
+  eval \"\$prog\" \"\$file\" $bg 
   if [ $? -ne 0 -a $and -eq 1 ] 
   then
     break
