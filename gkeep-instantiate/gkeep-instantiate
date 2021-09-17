@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+import gkeepapi
+import datetime
+import sys
+import re
+
+# get the next weekday on or after the given date
+# source: https://stackoverflow.com/a/37649782
+onDay = lambda date, weekday: date + datetime.timedelta(days=(weekday-date.weekday()+7)%7)
+
+# get notes by exact title match
+getNotesByTitle = lambda title: keep.find(query=re.compile(f'^{title}$'))
+
+# configuration
+SHOP_DAY = 5 # Saturday
+TEMPLATE_LABEL = 'Vorlage'
+
+# get next shopping day on or after today
+nextday = onDay(datetime.date.today(), SHOP_DAY)
+# print(nextday)
+# sys.exit(0)
+
+# parse command line arguments
+username = sys.argv[1]
+password = sys.argv[2]
+title = sys.argv[3]
+# initialize Keep API
+keep = gkeepapi.Keep()
+keep.login(username, password)
+# get template label
+label = keep.findLabel(TEMPLATE_LABEL)
+# retrieve note template
+oldNotes = getNotesByTitle(title)
+foundTemplate = False
+for oldNote in oldNotes:
+    # make sure the note is labeled as a template
+    if oldNote.labels.get(label.id) == None:
+        continue
+    foundTemplate = True
+    # TODO check if note does not yet exist
+    # TODO instead, use createList like https://github.com/kiwiz/gkeepapi/issues/75#issuecomment-58819720
+    # TODO additionally copy indentation via indented
+    newNote = keep.createNote(f'{oldNote.title} {nextday}', oldNote.text)
+    # TODO copy all labels except template
+    # TODO copy collaborators
+    keep.sync()
+    # We assume that there is only one such note.
+    break
+
+if not foundTemplate:
+    sys.exit('No template note found')
