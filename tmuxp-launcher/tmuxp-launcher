@@ -1,0 +1,22 @@
+#!/bin/bash
+# 
+# tmuxp-launcher: load a tmuxp session from all available profiles
+# 
+# © Christoph Lange <math.semantic.web@gmail.com> 2021
+
+DIRECTORY="$HOME/.tmuxp"
+
+exec 3>&1
+choice=$(dialog --backtitle "Project" --menu "Select the project for which a tmux session will be created:" 15 40 10 \
+                $(cd "$DIRECTORY"
+                  let i=1
+                  for file in *.yaml
+                  do
+                      session="${file%.yaml}"
+                      echo -n "${session} $((i++)) "
+                  done
+                ) 2>&1 1>&3)
+exec 3>&-
+clear
+
+tmuxp load "$DIRECTORY/$choice.yaml"
