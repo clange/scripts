@@ -1,0 +1,18 @@
+#!/bin/bash
+# 
+# qpdf-multi-pages: extract multiple ranges from one PDF to multiple files
+#
+# Usage: qpdf-multi-pages input.pdf 1-2 output1.pdf 3-4 output2.pdf
+# 
+# © Christoph Lange <math.semantic.web@gmail.com> 2021
+
+input="${1?Input file not specified}"
+shift
+while (($#))
+do
+    range="$1"
+    output="${2?Output file not specified}"
+    echo "Extracting pages ${range} to ${output}" >&2
+    qpdf --empty --pages "$input" "$range" -- "$output"
+    shift 2
+done
