@@ -59,10 +59,10 @@ if [[ $help == 1 ]]
 then
     help
     exit 0
-elif [[ 0 == 1 ]] # TODO validate command line arguments
-then
-    help
-    exit 1
+# elif [[ 0 == 1 ]] # TODO validate command line arguments
+# then
+#     help
+#     exit 1
 fi
 
 while \
