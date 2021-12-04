@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ~/git/github.com/clange/scripts/termux-shortcuts/ 
+git pull
+rsync -avz --delete . ~/.shortcuts

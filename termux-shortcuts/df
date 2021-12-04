@@ -1,0 +1,4 @@
+#!/bin/bash
+termux-dialog confirm -t df -i "$(
+df -h /data/media | tail -n 1 | awk '{print $4}'
+)"
