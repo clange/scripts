@@ -38,9 +38,22 @@ for oldNote in oldNotes:
         continue
     foundTemplate = True
     # TODO check if note does not yet exist
-    # TODO instead, use createList like https://github.com/kiwiz/gkeepapi/issues/75#issuecomment-58819720
-    # TODO additionally copy indentation via indented
-    newNote = keep.createNote(f'{oldNote.title} {nextday}', oldNote.text)
+    # credits to https://github.com/kiwiz/gkeepapi/issues/75#issuecomment-58819720
+    if isinstance(oldNote, gkeepapi.node.List):
+        newNote = keep.createList(f'{oldNote.title} {nextday}')
+        # copy list items and their indentation
+        for oldListItem in oldNote.items:
+            newListItem = newNote.add(oldListItem.text, oldListItem.checked, gkeepapi.node.NewListItemPlacementValue.Bottom)
+            # if oldListItem.checked:
+            #     print('✓')
+            # print(oldListItem.text)
+            if oldListItem.indented:
+                lastParentItem.indent(newListItem)
+            else:
+                lastParentItem = newListItem
+    else:
+        newNote = keep.createNote(f'{oldNote.title} {nextday}', oldNote.text)
+
     # TODO copy all labels except template
     # TODO copy collaborators
     keep.sync()
