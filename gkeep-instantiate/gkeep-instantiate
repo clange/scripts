@@ -3,6 +3,7 @@ import gkeepapi
 import datetime
 import sys
 import re
+# import pprint
 
 # get the next weekday on or after the given date
 # source: https://stackoverflow.com/a/37649782
@@ -48,14 +49,24 @@ for oldNote in oldNotes:
             #     print('✓')
             # print(oldListItem.text)
             if oldListItem.indented:
+                # we assume that the last non-indented node will act as this node's parent.  In this situation, the value is not null, as the first item of a list is never indented.
                 lastParentItem.indent(newListItem)
             else:
                 lastParentItem = newListItem
     else:
+        # create a new note containing the same text as the old one
         newNote = keep.createNote(f'{oldNote.title} {nextday}', oldNote.text)
 
-    # TODO copy all labels except template
-    # TODO copy collaborators
+    # copy all labels except template
+    for label in oldNote.labels.all():
+        if label.name != TEMPLATE_LABEL:
+            print(label.name)
+            newNote.labels.add(label)
+
+    # copy collaborators
+    for collaborator in oldNote.collaborators.all():
+        newNote.collaborators.add(collaborator)
+
     keep.sync()
     # We assume that there is only one such note.
     break
