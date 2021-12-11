@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import netrc
 import gkeepapi
 import datetime
 import sys
@@ -22,9 +23,11 @@ nextday = onDay(datetime.date.today(), SHOP_DAY)
 # sys.exit(0)
 
 # parse command line arguments
-username = sys.argv[1]
-password = sys.argv[2]
-title = sys.argv[3]
+title = sys.argv[1]
+
+# read login
+netrc = netrc.netrc()
+username, _, password = netrc.authenticators('google.com')
 # initialize Keep API
 keep = gkeepapi.Keep()
 keep.login(username, password)
@@ -60,7 +63,7 @@ for oldNote in oldNotes:
     # copy all labels except template
     for label in oldNote.labels.all():
         if label.name != TEMPLATE_LABEL:
-            print(label.name)
+            # print(label.name)
             newNote.labels.add(label)
 
     # copy collaborators
