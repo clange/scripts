@@ -16,9 +16,14 @@ fi
 command=(qpdf --empty --pages)
 while (($# >= 2))
 do
-    command+=("${1}")
-    # TODO insert blank page if --show-npages is odd
+    command+=("$1")
+    if (($(qpdf --show-npages "$1") % 2))
+        # TODO make sure the blank-page PDF exists (in the desired size)
+        # echo showpage | ps2pdf -sPAPERSIZE=letter - blank.pdf
+        # https://unix.stackexchange.com/questions/277892/how-do-i-create-a-blank-pdf-from-the-command-line
+        command+=("blank-a4.pdf")
+    fi
     shift
 done
-command+=(-- "${1}")
+command+=(-- "$1")
 "${command[@]}"
