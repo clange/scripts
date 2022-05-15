@@ -1,0 +1,24 @@
+#!/bin/bash
+# 
+# qpdf-concat-even: concatenate multiple PDF documents, such that each one starts on an even page of the merged document (for double-sided printing)
+#
+# Usage: qpdf-concat-even INPUT... OUTPUT
+# 
+# © Christoph Lange <math.semantic.web@gmail.com> 2022
+
+if (($# < 2))
+then
+   echo "At least one input file and the output file must be specified." >&2
+   exit 1
+fi
+
+# idea: https://unix.stackexchange.com/a/511804
+command=(qpdf --empty --pages)
+while (($# >= 2))
+do
+    command+=("${1}")
+    # TODO insert blank page if --show-npages is odd
+    shift
+done
+command+=(-- "${1}")
+"${command[@]}"
