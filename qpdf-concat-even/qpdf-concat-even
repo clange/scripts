@@ -19,6 +19,9 @@ while (($# >= 2))
 do
     # insert blank page if previous document had an odd number of pages
     (( npages % 2 )) && command+=(blank.pdf)
+    # TODO make sure the blank-page PDF exists (in the desired size)
+    # echo showpage | ps2pdf -sPAPERSIZE=letter - blank.pdf
+    # https://unix.stackexchange.com/questions/277892/how-do-i-create-a-blank-pdf-from-the-command-line
     command+=("$1")
     npages=$(qpdf --show-npages "$1")
     shift
