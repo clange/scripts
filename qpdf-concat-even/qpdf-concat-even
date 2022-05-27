@@ -14,11 +14,14 @@ fi
 
 # idea: https://unix.stackexchange.com/a/511804
 command=(qpdf --empty --pages)
+npages=0
 while (($# >= 2))
 do
-    command+=("${1}")
-    # TODO insert blank page if --show-npages is odd
+    # insert blank page if previous document had an odd number of pages
+    (( npages % 2 )) && command+=(blank.pdf)
+    command+=("$1")
+    npages=$(qpdf --show-npages "$1")
     shift
 done
-command+=(-- "${1}")
-"${command[@]}"
+command+=(-- "$1")
+echo "${command[@]}"
