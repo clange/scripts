@@ -1,6 +1,6 @@
 #!/bin/bash
 # 
-# qpdf-concat-even: concatenate multiple PDF documents, such that each one starts on an even page of the merged document (for double-sided printing)
+# qpdf-concat-even: concatenate multiple PDF documents, such that each one starts on an odd page of the merged document (for double-sided printing)
 #
 # Usage: qpdf-concat-even INPUT... OUTPUT
 # 
