@@ -47,5 +47,9 @@ do
     fi
     shift
 done
+
+# add output filename to command line
 command+=(-- "$1")
+
+# execute the constructed command
 "${command[@]}"
