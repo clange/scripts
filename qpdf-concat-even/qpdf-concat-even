@@ -6,41 +6,46 @@
 # 
 # © Christoph Lange <math.semantic.web@gmail.com> 2022
 
-if (($# < 2))
+if (( $# < 2 ))
 then
    echo "At least one input file and the output file must be specified." >&2
    exit 1
 fi
 
+# We would like to read the width and height of a page into a variable to be reused later (requires bash 4.4)
+shopt -s lastpipe
+
 # idea: https://unix.stackexchange.com/a/511804
 command=(qpdf --empty --pages)
 npages=0
-while (($# >= 2))
+
+# initialize the cache directory for blank pages
+cache="$HOME/.cache/$(basename "$0")"
+[[ -d "$cache" ]] || mkdir -p "$cache"
+
+while (( $# >= 2 ))
 do
-    # insert blank page if previous document had an odd number of pages
-    (( npages % 2 )) && command+=(blank.pdf)
-    # TODO make sure the blank-page PDF exists (in the desired size)
-    # echo showpage | ps2pdf -sPAPERSIZE=letter - blank.pdf
-# echo showpage | ps2pdf -dDEVICEWIDTHPOINTS=595 -dDEVICEHEIGHTPOINTS=842 -  foo.pdf
-# pdfinfo foo.pdf                         Producer:       GPL Ghostscript 9.53.3
-# CreationDate:   Fri May 27 22:08:08 2022 CEST
-# ModDate:        Fri May 27 22:08:08 2022 CEST
-# Tagged:         no
-# UserProperties: no
-# Suspects:       no
-# Form:           none
-# JavaScript:     no
-# Pages:          1
-# Encrypted:      no
-# Page size:      595 x 842 pts (A4)
-# Page rot:       0
-# File size:      2326 bytes
-# Optimized:      no
-# PDF version:    1.4
-    # https://unix.stackexchange.com/questions/277892/how-do-i-create-a-blank-pdf-from-the-command-line
+    # add the current PDF to the concatenation
     command+=("$1")
+    # insert blank page if current document has an odd number of pages and is not the last document
     npages=$(qpdf --show-npages "$1")
+    if (( npages % 2 && $# > 2 ))
+    then
+        # find out the page size of this PDF
+        pdfinfo "$1" \
+            | perl -lne 'print "$1 $2" if /^Page size:[[:space:]]*([0-9.]+) x ([0-9.]+) pts/' \
+            | read width height
+        # if the blank page in the required size does not exist in the cache, create it
+        blank="$HOME/.cache/$me/blank-${width}x${height}.pdf"
+        if [[ ! -f "$blank" ]]
+        then
+            echo showpage \
+                | ps2pdf -dDEVICEWIDTHPOINTS="$width" -dDEVICEHEIGHTPOINTS="$height" - "$blank"
+        fi
+        # add a blank page to the concatenation
+        command+=("$blank")
+    fi
     shift
 done
 command+=(-- "$1")
-echo "${command[@]}"
+"${command[@]}"
