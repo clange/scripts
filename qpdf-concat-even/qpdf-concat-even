@@ -36,7 +36,7 @@ do
             | perl -lne 'print "$1 $2" if /^Page size:[[:space:]]*([0-9.]+) x ([0-9.]+) pts/' \
             | read width height
         # if the blank page in the required size does not exist in the cache, create it
-        blank="$HOME/.cache/$me/blank-${width}x${height}.pdf"
+        blank="$HOME/.cache/$(basename $0)/blank-${width}x${height}.pdf"
         if [[ ! -f "$blank" ]]
         then
             echo showpage \
