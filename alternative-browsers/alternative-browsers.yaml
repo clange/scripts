@@ -1,0 +1,31 @@
+# Place this in ~/.config/alternative-browsers/
+
+browsers:
+  firefox: C:\Program Files (x86)\Mozilla Firefox\firefox.exe
+  chrome: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
+  edge: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
+  zoom: C:\Users\langebev\AppData\Roaming\Zoom\bin\Zoom.exe
+
+rules:
+  - comment: Microsoft 365
+    match:
+      - //sharepoint\.com
+      - //teams\.microsoft\.com
+    browser: edge
+  - comment: SAP
+    match:
+      - netloc: ariba\.com
+      - netloc: concursolutions\.com
+      - netloc: ondemand\.com
+      - netloc: sapanalytics\.cloud
+      - netloc: successfactors\.eu
+    browser: edge
+  - comment: Google Docs
+    match: //(docs|drive)\.google\.com
+    browser: chrome
+  - comment: Zoom
+    match:
+      - netloc: zoom\.us
+    browser: zoom
+
+default: firefox

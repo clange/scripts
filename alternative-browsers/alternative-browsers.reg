@@ -1,0 +1,53 @@
+Windows Registry Editor Version 5.00 
+
+; https://kolbi.cz/blog/2019/01/27/register-a-portable-browser-and-make-it-the-default/
+; change path\\to into the actual path of the script
+; then use SetDefaultBrowser (https://kolbi.cz/blog/2017/11/10/setdefaultbrowser-set-the-default-browser-per-user-on-windows-10-and-server-2016-build-1607/)
+
+[HKEY_CURRENT_USER\Software\RegisteredApplications]
+"AlternativeBrowsers"="Software\Clients\StartMenuInternet\AlternativeBrowsers\Capabilities"
+
+[HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers]
+@="Alternative Browsers"
+ [HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers\Capabilities]
+"ApplicationDescription"="Alternative Browsers"
+"ApplicationIcon"="C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe,0"
+"ApplicationName"="Alternative Browsers"
+;  [HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers\Capabilities\FileAssociations]
+; ; you can add additional filetypes like .pdf if your browser supports it
+; ".htm"="AlternativeBrowsersHTM"
+; ".html"="AlternativeBrowsersHTM"
+ [HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers\Capabilities\Startmenu]
+"StartMenuInternet"="AlternativeBrowsers"
+ [HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers\Capabilities\URLAssociations]
+; you can add additional protocols like mailto for example
+"http"="AlternativeBrowsersHTM"
+"https"="AlternativeBrowsersHTM"
+ [HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers\DefaultIcon]
+@="C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe,0"
+
+[HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers\shell]
+
+[HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers\shell\open]
+
+[HKEY_CURRENT_USER\Software\Clients\StartMenuInternet\AlternativeBrowsers\shell\open\command]
+@="\"C:\\path\\to\\alternative-browsers.bat\""
+
+[HKEY_CURRENT_USER\Software\Classes\AlternativeBrowsersHTM]
+@="AlternativeBrowsers Handler"
+"AppUserModelId"="AlternativeBrowsers"
+
+[HKEY_CURRENT_USER\Software\Classes\AlternativeBrowsersHTM\Application]
+"AppUserModelId"="AlternativeBrowsers"
+"ApplicationIcon"="C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe,0"
+"ApplicationName"="AlternativeBrowsers"
+"ApplicationDescription"="Browse the web with different browsers per URL"
+"ApplicationCompany"="Alternative Browsers"
+
+[HKEY_CURRENT_USER\Software\Classes\AlternativeBrowsersHTM\DefaultIcon]
+@="C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe,0"
+[HKEY_CURRENT_USER\Software\Classes\AlternativeBrowsersHTM\shell]
+[HKEY_CURRENT_USER\Software\Classes\AlternativeBrowsersHTM\shell\open]
+[HKEY_CURRENT_USER\Software\Classes\AlternativeBrowsersHTM\shell\open\command]
+; your browser might offer different arguments here - %1 opens just the argument given
+@="\"C:\\path\\to\\alternative-browsers.bat\" \"%1\""
