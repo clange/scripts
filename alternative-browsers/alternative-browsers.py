@@ -30,13 +30,16 @@ if __name__ == "__main__":
     for rule in data['rules']:
         # iterate over multiple regular expressions, or use a single one
         for match in rule['match'] if type(rule['match']) == list else [rule['match']]:
+            # match a specific part of the URI
             if type(match) == dict:
                 item = list(match.items())[0]
                 regex = item[1]
                 to_match = getattr(urlparse(url), item[0])
+            # otherwise match the full URI
             else:
                 regex = match
                 to_match = url
+            # run the specified browser
             if re.search(regex, to_match):
                 path = data['browsers'][rule['browser']]
                 subprocess.run([path, url])
