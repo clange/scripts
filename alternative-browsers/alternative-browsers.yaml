@@ -1,16 +1,31 @@
 # Place this in ~/.config/alternative-browsers/
 
 browsers:
-  firefox: C:\Program Files (x86)\Mozilla Firefox\firefox.exe
   chrome: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
   edge: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
+  excel: C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
+  firefox: C:\Program Files (x86)\Mozilla Firefox\firefox.exe
+  powerpoint: C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE
+  word: C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE
   zoom: C:\Users\langebev\AppData\Roaming\Zoom\bin\Zoom.exe
 
 rules:
-  - comment: Microsoft 365
+  - comment: Microsoft 365 / Excel
     match:
-      - //sharepoint\.com
-      - //teams\.microsoft\.com
+      - //[^/]*sharepoint\.com/.*\.xlsx\?
+    browser: excel
+  - comment: Microsoft 365 / PowerPoint
+    match:
+      - //[^/]*sharepoint\.com/.*\.pptx\?
+    browser: powerpoint
+  - comment: Microsoft 365 / Word
+    match:
+      - //[^/]*sharepoint\.com/.*\.docx\?
+    browser: word
+  - comment: Microsoft 365 in Browser
+    match:
+      - netloc: sharepoint\.com
+      - netloc: teams\.microsoft\.com
     browser: edge
   - comment: SAP
     match:
@@ -23,9 +38,9 @@ rules:
   - comment: Google Docs
     match: //(docs|drive)\.google\.com
     browser: chrome
-  - comment: Zoom
-    match:
-      - netloc: zoom\.us
-    browser: zoom
+  # - comment: Zoom
+  #   match:
+  #     - netloc: zoom\.us
+  #   browser: zoom
 
 default: firefox
