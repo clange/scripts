@@ -36,7 +36,7 @@ rules:
       - netloc: successfactors\.eu
     browser: edge
   - comment: Google Docs
-    match: //(docs|drive)\.google\.com
+    match: //(docs|drive|meet)\.google\.com
     browser: chrome
   # - comment: Zoom
   #   match:
