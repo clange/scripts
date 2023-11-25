@@ -1,0 +1,19 @@
+#!/bin/bash
+# 
+# download-without-query: download from multiple URLs after stripping the query string (e.g., podcast audios)
+# 
+# © Christoph Lange <math.semantic.web@gmail.com> 2023
+
+# successively read names from standard input
+# one line of input is assumed to be a URL,
+# possibly including a query string (?...)
+while read url
+do
+    # strip query string from URL then wrap in single quotes
+    url="'${url%\?*}'"
+    # add any such URL to the command line
+    args="${args} ${url}" 
+done
+
+# Invoke the download tool (here: wget) with all URLs as arguments
+eval 'wget'"$args"
