@@ -27,3 +27,7 @@ $Appointment.Duration = $DurationTimeSpan.TotalMinutes
 
 # Display the appointment for further editing
 $Appointment.Display($true)
+
+# Bring the Outlook window to the front
+$Shell = New-Object -ComObject WScript.Shell
+$Shell.AppActivate("Microsoft Outlook")
