@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 # create-outlook-appointment.ps1: create an Outlook appointment
 
 # © Christoph Lange <math.semantic.web@gmail.com> 2024–
