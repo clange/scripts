@@ -13,29 +13,55 @@ param (
     [string]$EndTime = ""
 )
 
-# Fail if both EndTime and Duration are specified
-if ($EndTime -ne "" -and $Duration -ne "") {
+# Function to parse date and time
+function ParseDateTime($dateString, $formats) {
+    foreach ($format in $formats) {
+        try {
+            return [datetime]::ParseExact($dateString, $format, $null)
+        } catch {
+            continue
+        }
+    }
+    Write-Error "Invalid date format: $dateString"
+    exit 1
+}
+
+# Validate input parameters
+if ($Duration -ne "" -and $EndTime -ne "") {
     Write-Error "Specify either EndTime or Duration, not both."
     exit 1
 }
 
-# Convert the start time and to a DateTime object
-$StartDateTime = [datetime]::ParseExact($StartTime, "yyyy-MM-ddTHH:mm", $null)
+# Determine the type of event and set properties accordingly
+$AllDayEvent = $false
+$StartDateTime = ParseDateTime $StartTime @("yyyy-MM-dd", "yyyy-MM-ddTHH:mm")
 
-# Calculate the end time based on the provided EndTime or Duration
-if ($EndTime -ne "") {
-    if ($EndTime -match "^\d{2}:\d{2}$") {
-        # EndTime is in HH:mm format, use the same date as StartTime
-        $EndDateTime = [datetime]::ParseExact("$($StartDateTime.ToString('yyyy-MM-dd'))T$EndTime", "yyyy-MM-ddTHH:mm", $null)
+if ($StartTime -match "^\d{4}-\d{2}-\d{2}$") {
+    if ($EndTime -eq "" -and $Duration -eq "") {
+        # All-day event for one day
+        $EndDateTime = $StartDateTime.AddDays(1)
+        $AllDayEvent = $true
+    } elseif ($EndTime -match "^\d{4}-\d{2}-\d{2}$") {
+        # All-day event from StartTime to EndTime
+        $EndDateTime = ParseDateTime $EndTime @("yyyy-MM-dd").AddDays(1)
+        $AllDayEvent = $true
     } else {
-        # EndTime is in yyyy-MM-ddTHH:mm format
-        $EndDateTime = [datetime]::ParseExact($EndTime, "yyyy-MM-ddTHH:mm", $null)
+        Write-Error "Invalid combination of StartTime and EndTime."
+        exit 1
     }
-    $DurationTimeSpan = $EndDateTime - $StartDateTime
+} elseif ($StartTime -match "^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$") {
+    if ($EndTime -ne "") {
+        $EndDateTime = ParseDateTime $EndTime @("yyyy-MM-ddTHH:mm")
+    } elseif ($Duration -ne "") {
+        $DurationTimeSpan = [timespan]::Parse($Duration)
+        $EndDateTime = $StartDateTime.Add($DurationTimeSpan)
+    } else {
+        Write-Error "Either EndTime or Duration must be specified."
+        exit 1
+    }
 } else {
-    # Use Duration to calculate the end time
-    $DurationTimeSpan = [timespan]::Parse($Duration)
-    $EndDateTime = $StartDateTime.Add($DurationTimeSpan)
+    Write-Error "Invalid StartTime format."
+    exit 1
 }
 
 # Create a new Outlook application object
@@ -49,6 +75,7 @@ $Appointment.Subject = $Subject
 $Appointment.Start = $StartDateTime
 $Appointment.End = $EndDateTime
 # $Appointment.Duration = $DurationTimeSpan.TotalMinutes
+$Appointment.AllDayEvent = $AllDayEvent
 
 # Display the appointment for further editing
 $Appointment.Display($true)
