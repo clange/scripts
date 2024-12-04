@@ -19,4 +19,5 @@ choice=$(dialog --backtitle "Project" --menu "Select the project for which a tmu
 exec 3>&-
 clear
 
-tmuxp load "$DIRECTORY/$choice.yaml"
+cd "$DIRECTORY"
+tmuxp load "$choice.yaml"
