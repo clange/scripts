@@ -10,7 +10,9 @@ param (
     [string]$Subject = "",
     [string]$StartTime = (Get-Date).ToString("yyyy-MM-ddTHH:mm"),
     [string]$Duration = "01:00", # formatted like HH:mm
-    [string]$EndTime = ""
+    [string]$EndTime = "",
+    [string]$RequiredAttendees = "",
+    [string]$OptionalAttendees = ""
 )
 
 # Function to parse date and time
@@ -76,6 +78,8 @@ $Appointment.Start = $StartDateTime
 $Appointment.End = $EndDateTime
 # $Appointment.Duration = $DurationTimeSpan.TotalMinutes
 $Appointment.AllDayEvent = $AllDayEvent
+$Appointment.RequiredAttendees = $RequiredAttendees
+$Appointment.OptionalAttendees = $OptionalAttendees 
 
 # Display the appointment for further editing
 $Appointment.Display($true)
