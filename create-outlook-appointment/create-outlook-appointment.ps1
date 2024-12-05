@@ -2,6 +2,8 @@
 
 # create-outlook-appointment.ps1: create an Outlook appointment
 
+# Usage: .\CreateOutlookAppointment.ps1 -Subject "Team Meeting" -StartTime "2024-12-05T10:00" -Duration "02:00" -BusyStatus "Tentative"
+
 # © Christoph Lange <math.semantic.web@gmail.com> 2024–
 
 # Download and licensing information available at https://github.com/clange/scripts
