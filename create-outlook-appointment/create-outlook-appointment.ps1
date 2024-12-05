@@ -2,7 +2,7 @@
 
 # create-outlook-appointment.ps1: create an Outlook appointment
 
-# Usage: .\CreateOutlookAppointment.ps1 -Subject "Team Meeting" -StartTime "2024-12-05T10:00" -Duration "02:00" -BusyStatus "Tentative"
+# Usage: .\create-outlook-appointment.ps1 -Subject "Team Meeting" -StartTime "2024-12-05T10:00" -Duration "02:00" -BusyStatus "Tentative"
 
 # © Christoph Lange <math.semantic.web@gmail.com> 2024–
 
@@ -11,7 +11,7 @@
 param (
     [string]$Subject = "",
     [string]$StartTime = (Get-Date).ToString("yyyy-MM-ddTHH:mm"),
-    [string]$Duration = "01:00", # formatted like HH:mm
+    [string]$Duration = "", # formatted like HH:mm
     [string]$EndTime = "",
     [ValidateSet("Busy", "Free", "Tentative", "OutOfOffice")]
     [string]$BusyStatus = "Busy",
@@ -57,13 +57,17 @@ if ($StartTime -match "^\d{4}-\d{2}-\d{2}$") {
     }
 } elseif ($StartTime -match "^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$") {
     if ($EndTime -ne "") {
+        if ($EndTime -match "^\d{2}:\d{2}$") {
+           $EndTime = "$( $StartDateTime.ToString("yyyy-MM-dd") )T${EndTime}"
+           Write-Host $EndTime
+        }
         $EndDateTime = ParseDateTime $EndTime @("yyyy-MM-ddTHH:mm")
     } elseif ($Duration -ne "") {
         $DurationTimeSpan = [timespan]::Parse($Duration)
         $EndDateTime = $StartDateTime.Add($DurationTimeSpan)
     } else {
-        Write-Error "Either EndTime or Duration must be specified."
-        exit 1
+        # Default duration 1 hour if neither duration nor end time specified
+        $Duration = "1:00"            
     }
 } else {
     Write-Error "Invalid StartTime format."
