@@ -11,6 +11,8 @@ param (
     [string]$StartTime = (Get-Date).ToString("yyyy-MM-ddTHH:mm"),
     [string]$Duration = "01:00", # formatted like HH:mm
     [string]$EndTime = "",
+    [ValidateSet("Busy", "Free", "Tentative", "OutOfOffice")]
+    [string]$BusyStatus = "Busy",
     [string]$RequiredAttendees = "",
     [string]$OptionalAttendees = ""
 )
@@ -78,6 +80,7 @@ $Appointment.Start = $StartDateTime
 $Appointment.End = $EndDateTime
 # $Appointment.Duration = $DurationTimeSpan.TotalMinutes
 $Appointment.AllDayEvent = $AllDayEvent
+$Appointment.BusyStatus = [Microsoft.Office.Interop.Outlook.OlBusyStatus]::"ol${BusyStatus}"
 $Appointment.RequiredAttendees = $RequiredAttendees
 $Appointment.OptionalAttendees = $OptionalAttendees 
 
