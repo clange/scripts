@@ -59,15 +59,15 @@ if ($StartTime -match "^\d{4}-\d{2}-\d{2}$") {
     if ($EndTime -ne "") {
         if ($EndTime -match "^\d{2}:\d{2}$") {
            $EndTime = "$( $StartDateTime.ToString("yyyy-MM-dd") )T${EndTime}"
-           Write-Host $EndTime
         }
         $EndDateTime = ParseDateTime $EndTime @("yyyy-MM-ddTHH:mm")
-    } elseif ($Duration -ne "") {
+    } else {
+        if ($Duration -eq "") {
+            # Default duration 1 hour if neither duration nor end time specified
+            $Duration = "1:00"            
+        }
         $DurationTimeSpan = [timespan]::Parse($Duration)
         $EndDateTime = $StartDateTime.Add($DurationTimeSpan)
-    } else {
-        # Default duration 1 hour if neither duration nor end time specified
-        $Duration = "1:00"            
     }
 } else {
     Write-Error "Invalid StartTime format."
