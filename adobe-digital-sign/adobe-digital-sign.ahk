@@ -14,5 +14,6 @@ Sleep(1000)
 WinWait("ahk_class #32770")
 WinActivate("ahk_class #32770")
 ; ^ Wait for the "Save as" dialog to appear (no proper window class)
+; FIXME add, separated by a space, ahk_exe or another criterion
 Send("{End}^{Left}signed.CL.{Enter}")
 ; ^ Specify file name

@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+# cp-to-date: create copy of a date-stamped file with a new date stamp
+#
+# © Christoph Lange <math.semantic.web@gmail.com> 2025
+
+#!/bin/bash
+
+# Usage: ./copy_with_date.sh [--date YYYY-MM-DD] <file>
+
+# Parse arguments
+DATE=$(date +%F)  # Default to today's date
+POSITIONAL=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --date)
+      DATE="$2"
+      shift 2
+      ;;
+    -*|--*)
+      echo "Unknown option $1" >&2
+      exit 1
+      ;;
+    *)
+      POSITIONAL+=("$1")
+      shift
+      ;;
+  esac
+done
+
+set -- "${POSITIONAL[@]}"
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $0 [--date YYYY-MM-DD] <file>" >&2
+  exit 1
+fi
+
+INPUT_FILE="$1"
+
+if [[ ! -f "$INPUT_FILE" ]]; then
+  echo "Error: File '$INPUT_FILE' does not exist." >&2
+  exit 1
+fi
+
+# Extract date pattern
+DATE_REGEX='[0-9]{4}-[0-9]{2}-[0-9]{2}'
+BASENAME=$(basename "$INPUT_FILE")
+DIRNAME=$(dirname "$INPUT_FILE")
+
+# Substitute date in basename …
+if [[ "$BASENAME" =~ $DATE_REGEX ]]; then
+  OLD_DATE="${BASH_REMATCH[0]}"
+  NEW_BASENAME="${BASENAME/$OLD_DATE/$DATE}"
+  NEW_PATH="$DIRNAME/$NEW_BASENAME"
+# … or in dirname
+elif [[ "$DIRNAME" =~ $DATE_REGEX ]]; then
+  OLD_DATE="${BASH_REMATCH[0]}"
+  NEW_DIRNAME="${DIRNAME/$OLD_DATE/$DATE}"
+  # … and create new directory if necessary
+  if [[ ! -d "$NEW_DIRNAME" ]]; then
+    mkdir -p "$NEW_DIRNAME"
+  fi
+  NEW_PATH="$NEW_DIRNAME/$BASENAME"
+else
+  echo "Error: No date in basename or dirname." >&2
+  exit 1
+fi
+
+# -i prevents overwriting the file if new directory had already existed
+cp -i "$INPUT_FILE" "$NEW_PATH"
+echo "$NEW_PATH"
