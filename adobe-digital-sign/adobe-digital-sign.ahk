@@ -2,18 +2,17 @@
 
 WinWait("ahk_class AVL_AVDialog")
 WinActivate("ahk_class AVL_AVDialog")
-Sleep(1000)
+Sleep(2000)
 Send("{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Enter}")
 ; ^ Click the "Continue" button
 WinWait("ahk_class AVL_AVDialog")
 WinActivate("ahk_class AVL_AVDialog")
-Sleep(1000)
+Sleep(2000)
 Send("{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Enter}")
 ; ^ Click the "Sign" button
-Sleep(1000)
-WinWait("ahk_class #32770")
-WinActivate("ahk_class #32770")
+Sleep(2000)
+WinWait("ahk_exe AcroRd32.exe ahk_class #32770")
+WinActivate("ahk_exe AcroRd32.exe ahk_class #32770")
 ; ^ Wait for the "Save as" dialog to appear (no proper window class)
-; FIXME add, separated by a space, ahk_exe or another criterion
 Send("{End}^{Left}signed.CL.{Enter}")
 ; ^ Specify file name

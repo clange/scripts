@@ -2,7 +2,7 @@
 
 WinActivate("ahk_class AcrobatSDIWindow")
 Send("^fDigitally Sign")
-Sleep(1000)
+Sleep(2000)
 Send("{Down}{Enter}")
 ; ^ Then, let the user draw the rectangle for the signature
 #include adobe-digital-sign.ahk
