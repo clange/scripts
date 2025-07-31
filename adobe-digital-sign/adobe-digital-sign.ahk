@@ -4,19 +4,34 @@
 ;
 ; Usage: to be invoked from adobe-digital-sign-click.ahk or adobe-digital-sign-draw.ahk, which initiates the signing
 ; 
+; Prerequisite: in Preferences / Signatures / Creation and Appearance, uncheck "Use modern user interface for signing and Digital ID configuration"
+; 
 ; © Christoph Lange <math.semantic.web@gmail.com> 2025
 
-WinWait("ahk_class AVL_AVDialog")
+issuer := "Fraunhofer User CA"
+
+WinWait("Sign Document ahk_exe AcroRd32.exe ahk_class #32770")
 WinActivate
-Sleep(2000)
-Send("{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Enter}")
-; ^ Click the "Continue" button
-WinWait("ahk_class AVL_AVDialog")
-WinActivate
-Sleep(2000)
-Send("{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Tab}{Enter}")
-; ^ Click the "Sign" button
-Sleep(2000)
+Sleep(500)
+
+items := ControlGetItems("ComboBox1")
+limit := items.Length - 2
+; ^ The last two entries are not signatures.
+i := 1
+for item in items {
+        if (i > limit)
+                break
+        ControlChooseIndex(i, "ComboBox1")
+        Sleep(200)
+        if (InStr(ControlGetText("Static2"), "Issued by: " issuer, , 1)) {
+                ; ^ Make sure the signature has the right issuer
+                ControlClick("&Sign")
+                ; ^ Click the "Sign" button
+                break
+        }
+        i++
+}
+Sleep(1000)
 WinWait("ahk_exe AcroRd32.exe ahk_class #32770")
 WinActivate
 ; ^ Wait for the "Save as" dialog to appear (no proper window class)
