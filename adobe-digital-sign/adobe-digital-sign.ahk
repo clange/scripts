@@ -9,6 +9,7 @@
 ; © Christoph Lange <math.semantic.web@gmail.com> 2025
 
 issuer := "Fraunhofer User CA"
+; Adapt this to your desired certificate issuer, or adapt the matching of the Static2 / "Issued by:" label below.
 
 WinWait("Sign Document ahk_exe AcroRd32.exe ahk_class #32770")
 WinActivate
@@ -24,7 +25,8 @@ for item in items {
         ControlChooseIndex(i, "ComboBox1")
         Sleep(200)
         if (InStr(ControlGetText("Static2"), "Issued by: " issuer, , 1)) {
-                ; ^ Make sure the signature has the right issuer
+                ; ^ Make sure the signature has the right issuer; if so, continue with the first signature of that issuer
+                ; It would be better to match the whole item text, but Adobe Reader somehow cripples it to the first four characters. 
                 ControlClick("&Sign")
                 ; ^ Click the "Sign" button
                 break
