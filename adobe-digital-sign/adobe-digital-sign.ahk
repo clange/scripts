@@ -34,8 +34,9 @@ for item in items {
         i++
 }
 Sleep(1000)
-WinWait("ahk_exe AcroRd32.exe ahk_class #32770")
+WinWait("Save As ahk_exe AcroRd32.exe ahk_class #32770")
 WinActivate
+Sleep(500)
 ; ^ Wait for the "Save as" dialog to appear (no proper window class)
 Send("{End}^{Left}signed.CL.{Enter}")
 ; ^ Specify file name
