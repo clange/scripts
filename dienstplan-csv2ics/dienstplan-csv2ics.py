@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import csv
+import re
 import sys
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -34,43 +35,59 @@ END:VTIMEZONE
 """
 
 # Function to generate iCalendar event with UID and correct TZID syntax
-def generate_ical_event(start, end, uid):
+def generate_ical_event(start, end, organizer, uid):
     return f"""
 BEGIN:VEVENT
 UID:{uid}
+SUMMARY:Dienst
 DTSTART;TZID=Europe/Berlin:{start.strftime('%Y%m%dT%H%M%S')}
 DTEND;TZID=Europe/Berlin:{end.strftime('%Y%m%dT%H%M%S')}
+{organizer}
 TRANSP:TRANSPARENT
 END:VEVENT
 """
 
+def format_organizer(input_str):
+    match = re.match(r'^(.*?)\s*<([^>]+)>$', input_str.strip())
+    if match:
+        name = match.group(1).strip()
+        email = match.group(2).strip()
+        return f'ORGANIZER;CN="{name}":mailto:{email}'
+    else:
+        raise ValueError("Input string is not in the expected format.")
+
 # Main function to read CSV and generate iCalendar entries
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python script.py <csv_file>")
+        print("Usage: python script.py 'Organizer Name <organizer@email.tld>'")
         return
 
-    csv_file = sys.argv[1]
+    organizer = format_organizer(sys.argv[1])
 
     print("BEGIN:VCALENDAR")
     print(vtimezone_berlin)
-    with open(csv_file, newline='', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            date_str = row['Datum']
-            dienst = row['Dienst']
-            if dienst not in dienst_times:
-                continue
+    reader = csv.DictReader(sys.stdin)
+    for row in reader:
+        date_str = row['Datum']
+        dienst = row['Dienst']
 
+        if dienst in dienst_times:
             start_time_str, end_time_str = dienst_times[dienst]
-            start_dt = datetime.strptime(f"{date_str} {start_time_str}", "%Y-%m-%d %H:%M").replace(tzinfo=cet)
-            end_dt = datetime.strptime(f"{date_str} {end_time_str}", "%Y-%m-%d %H:%M").replace(tzinfo=cet)
+        else:
+            match = re.match(r'^(\d{2}:\d{2})-(\d{2}:\d{2})$', dienst)
+            if match:
+                start_time_str, end_time_str = match.groups()
+            else:
+                continue  # Skip invalid format
 
-            # If end time is earlier than start time, it means the event ends the next day
-            if end_dt <= start_dt:
-                end_dt += timedelta(days=1)
+        start_dt = datetime.strptime(f"{date_str} {start_time_str}", "%Y-%m-%d %H:%M").replace(tzinfo=cet)
+        end_dt = datetime.strptime(f"{date_str} {end_time_str}", "%Y-%m-%d %H:%M").replace(tzinfo=cet)
 
-            print(generate_ical_event(start_dt, end_dt, uid=date_str))
+        # If end time is earlier than start time, it means the event ends the next day
+        if end_dt <= start_dt:
+            end_dt += timedelta(days=1)
+
+        print(generate_ical_event(start_dt, end_dt, organizer, uid=date_str))
     print("END:VCALENDAR")
 
 # Run the main function
