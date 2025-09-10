@@ -44,9 +44,6 @@ $TodayString = (Get-Date).ToString("yyyy-MM-dd")
 if ($StartTime -match "^\d{2}:\d{2}$") {
     $StartTime = "${TodayString}T${StartTime}"
 }
-if ($EndTime -match "^\d{2}:\d{2}$") {
-    $EndTime = "${TodayString}T${EndTime}"
-}
 $StartDateTime = ParseDateTime $StartTime @("yyyy-MM-dd", "yyyy-MM-ddTHH:mm")
 
 if ($StartTime -match "^\d{4}-\d{2}-\d{2}$") {
