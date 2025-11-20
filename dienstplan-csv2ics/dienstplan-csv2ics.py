@@ -5,6 +5,9 @@ import sys
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
+# To use this with Excel, pipe the output of the following into this script:
+# python -c "import sys, pandas as pd; pd.read_excel(sys.argv[1], sheet_name=0, engine='openpyxl').to_csv(sys.stdout, index=False)" input.xlsx | 
+
 # Define CET timezone
 cet = ZoneInfo("Europe/Berlin")
 
@@ -73,13 +76,15 @@ def main():
 
         if dienst in dienst_times:
             start_time_str, end_time_str = dienst_times[dienst]
+        elif dienst.lower() in dienst_times:
+            start_time_str, end_time_str = dienst_times[dienst.lower()]
         else:
             match = re.match(r'^(\d{2}:\d{2})-(\d{2}:\d{2})$', dienst)
             if match:
                 start_time_str, end_time_str = match.groups()
             else:
                 continue  # Skip invalid format
-
+        
         start_dt = datetime.strptime(f"{date_str} {start_time_str}", "%Y-%m-%d %H:%M").replace(tzinfo=cet)
         end_dt = datetime.strptime(f"{date_str} {end_time_str}", "%Y-%m-%d %H:%M").replace(tzinfo=cet)
 
