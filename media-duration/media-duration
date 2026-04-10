@@ -1,0 +1,17 @@
+#!/bin/bash
+# https://stackoverflow.com/a/3322121
+
+shopt -s nullglob
+let playlist_duration_ms=0
+for song_file in *.{mp3,ogg,m4a,flac,wav}; do
+  playlist_duration_ms=$(expr $playlist_duration_ms + $(mediainfo --Inform="Audio;%Duration%" "$song_file"))
+done
+shopt -u nullglob
+
+let playlist_duration_secs=$(($playlist_duration_ms / 1000))
+let playlist_duration_mins=$(($playlist_duration_secs / 60))
+let playlist_duration_hrs=$(($playlist_duration_mins / 60))
+let playlist_duration_remaining_secs=$(($playlist_duration_secs - $playlist_duration_mins * 60))
+let playlist_duration_remaining_mins=$(($playlist_duration_mins - $playlist_duration_hrs * 60))
+
+echo $playlist_duration_hrs hours, $playlist_duration_remaining_mins minutes, $playlist_duration_remaining_secs seconds
