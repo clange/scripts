@@ -13,7 +13,7 @@ param (
     [string]$StartTime = (Get-Date).ToString("yyyy-MM-ddTHH:mm"),
     [string]$Duration = "", # formatted like HH:mm
     [string]$EndTime = "",
-    [ValidateSet("Busy", "Free", "Tentative", "OutOfOffice")]
+    [ValidateSet("Busy", "Free", "Tentative", "OutOfOffice", "WorkingElsewhere")]
     [string]$BusyStatus = "Busy",
     [string]$RequiredAttendees = "",
     [string]$OptionalAttendees = ""
