@@ -73,11 +73,11 @@ def main():
     for row in reader:
         date_str = row['Datum']
         dienst = row['Dienst']
-
+        
         if dienst in dienst_times:
             start_time_str, end_time_str = dienst_times[dienst]
-        elif dienst.lower() in dienst_times:
-            start_time_str, end_time_str = dienst_times[dienst.lower()]
+        elif dienst.upper() in dienst_times:
+            start_time_str, end_time_str = dienst_times[dienst.upper()]
         else:
             match = re.match(r'^(\d{2}:\d{2})-(\d{2}:\d{2})$', dienst)
             if match:
