@@ -6,6 +6,7 @@
 
 DIRECTORY="$HOME/.tmuxp"
 
+# choose a tmux session
 exec 3>&1
 choice=$(dialog --backtitle "Project" --menu "Select the project for which a tmux session will be created:" 15 40 10 \
                 $(cd "$DIRECTORY"
@@ -19,5 +20,20 @@ choice=$(dialog --backtitle "Project" --menu "Select the project for which a tmu
 exec 3>&-
 clear
 
+# SSH public key setup
+
+# As I'm a non-admin user on Windows and cannot run the Windows OpenSSH Service, I need Cygwin's OpenSSH, and thus need to prioritize Cygwin's path
+PATH="/usr/bin:$PATH"
+
+if ! pgrep -x ssh-agent
+then
+    if eval `ssh-agent` && ssh-add ~/.ssh/id_ed25519
+    then
+        setx SSH_AUTH_SOCK $SSH_AUTH_SOCK
+        setx SSH_AGENT_PID $SSH_AGENT_PID
+    fi
+fi
+
+# start the tmux session
 cd "$DIRECTORY"
-tmuxp load "$choice.yaml"
+exec tmuxp load "$choice.yaml"
